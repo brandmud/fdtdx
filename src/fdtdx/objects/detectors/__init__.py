@@ -17,6 +17,7 @@ from .diffractive import DiffractiveDetector
 from .energy import EnergyDetector
 from .phasor import PhasorDetector
 from .poynting_flux import PoyntingFluxDetector
+from .modeoverlap import ModeOverlapDetector
 
 __all__ = [
     "EnergyDetector",
