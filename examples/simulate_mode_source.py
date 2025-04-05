@@ -19,11 +19,12 @@ from fdtdx.interfaces import DtypeConversion, Recorder
 from fdtdx.materials import Material
 from fdtdx.objects import  SimulationVolume, Substrate, Waveguide
 from fdtdx.objects.boundaries import BoundaryConfig, boundary_objects_from_config
-from fdtdx.objects.detectors import EnergyDetector
+from fdtdx.objects.detectors import EnergyDetector, PoyntingFluxDetector
 from fdtdx.objects.sources import GaussianPlaneSource, SimplePlaneSource, ModePlaneSource
 from fdtdx.core import WaveCharacter, OnOffSwitch
 from fdtdx.utils import Logger, plot_setup
-
+import matplotlib
+matplotlib.use("Agg")  # Use a non-interactive backend for saving figures
 
 def main():
     exp_logger = Logger(
@@ -42,6 +43,7 @@ def main():
     )
 
     period_steps = round(period / config.time_step_duration)
+    all_time_steps = list(range(config.time_steps_total))
     logger.info(f"{config.time_steps_total=}")
     logger.info(f"{period_steps=}")
     logger.info(f"{config.max_travel_distance=}")
@@ -91,13 +93,6 @@ def main():
         )
     )
 
-    # source = SimplePlaneSource(
-    #     partial_grid_shape=(None, None, 1),
-    #     partial_real_shape=(6e-6, 6e-6, None),
-    #     fixed_E_polarization_vector=(1, 0, 0),
-    #     wave_character=WaveCharacter(wavelength=1.550e-6),
-    #     direction="+",
-    # )
     waveguide_in = Waveguide(
         partial_real_shape=(None, 0.4e-6, height),
         material=material_config["Silicon"],
@@ -108,11 +103,6 @@ def main():
                 volume,
                 axes=1,
             ),
-            # waveguide_in.extend_to(
-            #     volume,
-            #     axis=0,
-            #     direction="+",
-            # ),
             waveguide_in.place_above(substrate),
         ]
     )
@@ -120,47 +110,20 @@ def main():
     source = ModePlaneSource(
         partial_grid_shape=(1, None, None),
         wave_character=WaveCharacter(wavelength=wavelength),
-        direction="+",
-        # partial_real_shape=(None, 0.4e-6, height)
+        direction="-",
     )
     placement_constraints.extend(
         [
             source.place_relative_to(
                 waveguide_in,
                 axes=(0,),
-                other_positions=(-1,),
+                other_positions=(-0.5,),
                 own_positions=(1,),
-                grid_margins=(bound_cfg.thickness_grid_minx + 4,),
+                grid_margins=(bound_cfg.thickness_grid_minx + 5,),
             )
         ]
     )
-    # source = GaussianPlaneSource(
-    #     partial_grid_shape=(None, None, 1),
-    #     partial_real_shape=(10e-6, 10e-6, None),
-    #     fixed_E_polarization_vector=(1, 0, 0),
-    #     # partial_grid_shape=(1, None, None),
-    #     # partial_real_shape=(None, 10e-6, 10e-6),
-    #     # fixed_E_polarization_vector=(0, 1, 0),
-    #     # partial_grid_shape=(None, 1, None),
-    #     # partial_real_shape=(10e-6, None, 10e-6),
-    #     # fixed_E_polarization_vector=(1, 0, 0),
-    #     wave_character=WaveCharacter(wavelength=1.550e-6),
-    #     radius=4e-6,
-    #     std=1 / 3,
-    #     direction="-",
-    #     # azimuth_angle=20.0,
-    #     elevation_angle=-20.0,
-    # )
-    # constraints.extend(
-    #     [
-    #         source.place_relative_to(
-    #             volume,
-    #             axes=(0, 1, 2),
-    #             own_positions=(0, 0, 0),
-    #             other_positions=(0, 0, 0),
-    #         ),
-    #     ]
-    # )
+    
 
     video_energy_detector = EnergyDetector(
         name="Energy Video",
@@ -178,6 +141,54 @@ def main():
         exact_interpolation=True,
     )
     placement_constraints.extend(backwards_video_energy_detector.same_position_and_size(volume))
+
+    power_detector_right = PoyntingFluxDetector(
+        name="Power detector right",
+        color="red",
+        partial_grid_shape=(1, None, None),
+        direction="+",
+        switch=OnOffSwitch(fixed_on_time_steps=all_time_steps[3 * period_steps : 5 * period_steps]),
+    )
+    placement_constraints.extend(
+        [
+            power_detector_right.place_relative_to(
+                waveguide_in,
+                axes=(0, 1, 2),
+                own_positions=(-1, 0, 0),
+                other_positions=(0, 0, 0),
+                grid_margins=(bound_cfg.thickness_grid_minx + 5, 0, 0),
+                margins=(0.2e-6, 0, 0),
+            ),
+            power_detector_right.size_relative_to(
+                waveguide_in,
+                axes=(1, 2),
+            ),
+        ]
+    )
+
+    power_detector_left = PoyntingFluxDetector(
+        name="Power detector left",
+        color="blue",
+        partial_grid_shape=(1, None, None),
+        direction="-",
+        switch=OnOffSwitch(fixed_on_time_steps=all_time_steps[3 * period_steps : 5 * period_steps]),
+    )
+    placement_constraints.extend(
+        [
+            power_detector_left.place_relative_to(
+                waveguide_in,
+                axes=(0, 1, 2),
+                own_positions=(-1, 0, 0),
+                other_positions=(-1, 0, 0),
+                grid_margins=(bound_cfg.thickness_grid_minx, 0, 0),
+                margins=(0.2e-6, 0, 0),
+            ),
+            power_detector_left.size_relative_to(
+                waveguide_in,
+                axes=(1, 2),
+            ),
+        ]
+    )
 
     key, subkey = jax.random.split(key)
     objects, arrays, params, config, _ = place_objects(
