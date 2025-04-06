@@ -101,9 +101,15 @@ class ModePlaneSource(TFSFPlaneSource):
         return mode_E, mode_H, time_offset_E, time_offset_H
 
     def plot(self, save_path: str | Path):
+        # handle pathlib.Path and str
+        if isinstance(save_path, str):
+            save_path = Path(save_path)
+        
+
         if self._H is None or self._E is None:
             raise Exception("Cannot plot mode without init to grid and apply params first")
 
+        # plot energy density
         energy = compute_energy(
             E=self._E,
             H=self._H,
@@ -126,5 +132,32 @@ class ModePlaneSource(TFSFPlaneSource):
         # Ensure the plot takes up the entire figure
         plt.tight_layout(pad=0)
 
-        plt.savefig(save_path, bbox_inches="tight", pad_inches=0)
+        plt.savefig(save_path.parent / (save_path.stem + "_energy" + save_path.suffix), bbox_inches="tight", pad_inches=0)
+        plt.close(fig)
+
+        # plot E field
+        plt.clf()
+        fig = plt.figure(figsize=(10, 10))
+        plt.imshow(
+            jnp.real(self._E[1,0,:,:].T),
+            cmap=mode_cmap,
+            origin="lower",
+        )
+        plt.gca().set_aspect("equal")
+        plt.colorbar()
+        plt.tight_layout(pad=0)
+        plt.savefig(save_path.parent / (save_path.stem + "_E_real" + save_path.suffix), bbox_inches="tight", pad_inches=0)
+        plt.close(fig)
+
+        plt.clf()
+        fig = plt.figure(figsize=(10, 10))
+        plt.imshow(
+            jnp.imag(self._E[1,0,:,:].T),
+            cmap=mode_cmap,
+            origin="lower",
+        )
+        plt.gca().set_aspect("equal")
+        plt.colorbar()
+        plt.tight_layout(pad=0)
+        plt.savefig(save_path.parent / (save_path.stem + "_E_imag" + save_path.suffix), bbox_inches="tight", pad_inches=0)
         plt.close(fig)

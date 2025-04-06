@@ -36,8 +36,8 @@ def main():
     period = constants.wavelength_to_period(wavelength)
 
     config = SimulationConfig(
-        time=100e-15,
-        resolution=100e-9,
+        time=1e-15,
+        resolution=10e-9,
         dtype=jnp.float32,
         courant_factor=0.99,
     )
@@ -213,7 +213,10 @@ def main():
         ),
     )
 
-    apply_params(arrays, objects, params, key)
+    apply_output = apply_params(arrays, objects, params, key)
+
+    # plot source
+    apply_output[1].sources[0].plot(exp_logger.cwd / "source.png")
 
     def sim_fn(
         params: ParameterContainer,
