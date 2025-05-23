@@ -65,6 +65,21 @@ relative_permittivity_ormo_prime: float = 1.817104
 SHARD_STR: str = "shard"
 """String constant used to identify sharded computations."""
 
+relative_permittivity_silica530: float = 2.1339
+"""Relative permittivity of silica."""
+
+relative_permittivity_silica660: float = 2.1207
+"""Relative permittivity of silica."""
+
+relative_permittivity_silicon_nitride1030: float = 4.0469
+"""Relative permittivity of Silicon Nitride at 1030 nm"""
+
+relative_permittivity_silicon_nitride660: float = 4.029
+"""Relative permittivity of Silicon Nitride at 660 nm"""
+
+relative_permittivity_silicon_nitride530: float = 4.2284
+"""Relative permittivity of Silicon Nitride at 530 nm"""
+
 
 def wavelength_to_period(wavelength: float) -> float:
     """Convert wavelength to time period using speed of light.

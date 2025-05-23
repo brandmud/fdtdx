@@ -111,7 +111,7 @@ class ModeOverlapDetector(Detector):
             E_mode, H_mode, _ = compute_mode(
                 frequency=self.frequencies[0],
                 inv_permittivities=inv_permittivity[self.grid_slice],
-                inv_permeabilities=inv_permeability,
+                inv_permeabilities=inv_permeability[self.grid_slice],
                 resolution=self._config.resolution,
                 direction=self.direction,
                 mode_index=self.mode_index,
