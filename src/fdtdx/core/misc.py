@@ -429,11 +429,24 @@ def linear_interpolated_indexing(
     return result
 
 
-def get_air_name(materials: dict[str, Material]):
+def get_air_name(materials: dict[str, Material]) -> str:
     for k, v in materials.items():
-        if v.permittivity == 1 and v.permeability == 1 and v.conductivity == 0:
+        if v.permittivity == 1 and v.permeability == 1:
             return k
-    raise Exception(f"Could not find air in: {materials}")
+    background_material_name = list(materials.keys())[0]
+    print(f"Warning: Could not find air in {materials}\n Choosing '{background_material_name=}' instead.")
+    return background_material_name
+
+
+def get_background_material_name(materials: dict[str, Material]) -> str:
+    min_permittivity, result_name = math.inf, None
+    for k, v in materials.items():
+        if v.permittivity < min_permittivity:
+            result_name = k
+            min_permittivity = v.permittivity
+    if result_name is None:
+        raise Exception("Empty Material dictionary!")
+    return result_name
 
 
 @extended_autoinit
@@ -446,9 +459,7 @@ class PaddingConfig(ExtendedTreeClass):
 
     widths: Sequence[int] = frozen_field()
     modes: Sequence[str] = frozen_field()
-    values: Sequence[float] = frozen_field(
-        default=None,  # type: ignore
-    )
+    values: Sequence[float] = frozen_field(default=None)  # type: ignore
 
 
 def advanced_padding(
