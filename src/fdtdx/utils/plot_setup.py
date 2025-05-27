@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 import matplotlib
+
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
@@ -73,7 +74,9 @@ def plot_setup(
     resolution = config.resolution / 1.0e-6  # Convert to µm
 
     # get a color map
-    colored_objects: list[SimulationObject] = [o for o in object_list if o.color is not None]
+    colored_objects: list[SimulationObject] = [
+        o for o in object_list if o.color is not None
+    ]
 
     if plot_legend:
         handles = []
@@ -108,7 +111,10 @@ def plot_setup(
         color = obj.color
 
         # XY plane at Z center
-        if exclude_xy_plane_object_list is None or obj not in exclude_xy_plane_object_list:
+        if (
+            exclude_xy_plane_object_list is None
+            or obj not in exclude_xy_plane_object_list
+        ):
             axs[0].add_patch(
                 Rectangle(
                     (slices[0][0] * resolution, slices[1][0] * resolution),
@@ -121,7 +127,10 @@ def plot_setup(
             )
 
         # XZ plane at Y center
-        if exclude_xz_plane_object_list is None or obj not in exclude_xz_plane_object_list:
+        if (
+            exclude_xz_plane_object_list is None
+            or obj not in exclude_xz_plane_object_list
+        ):
             axs[1].add_patch(
                 Rectangle(
                     (slices[0][0] * resolution, slices[2][0] * resolution),
@@ -134,7 +143,10 @@ def plot_setup(
             )
 
         # YZ plane at X center
-        if exclude_yz_plane_object_list is None or obj not in exclude_yz_plane_object_list:
+        if (
+            exclude_yz_plane_object_list is None
+            or obj not in exclude_yz_plane_object_list
+        ):
             axs[2].add_patch(
                 Rectangle(
                     (slices[1][0] * resolution, slices[2][0] * resolution),
