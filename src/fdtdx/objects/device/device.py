@@ -191,10 +191,11 @@ class Device(OrderableObject, ABC):
             p = jax.random.uniform(
                 key=subkey,
                 shape=cur_shape,
-                minval=0,  # parameter always live between 0 and 1
-                maxval=1,
+                minval=0.00,  # parameter always live between 0 and 1
+                maxval=1.00,
                 dtype=jnp.float32,
             )
+            
             params[k] = p
         if len(params) == 1:
             params = list(params.values())[0]

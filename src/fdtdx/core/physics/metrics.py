@@ -94,7 +94,7 @@ def normalize_by_poynting_flux(E: jax.Array, H: jax.Array, axis: int = 0) -> tup
     S_real = 0.5 * jnp.real(S_complex[axis])  # power flow in desired direction
 
     # Integrate over transverse plane (axis orthogonal to `axis`)
-    power = jnp.sum(S_real)
+    power = jnp.abs(jnp.sum(S_real))
 
     # Normalize
     norm_factor = jnp.sqrt(power)

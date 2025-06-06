@@ -215,7 +215,7 @@ def reset_array_container(
     detector_states = arrays.detector_states
     if reset_detector_states:
         detector_states = {k: {k2: v2 * 0 for k2, v2 in v.items()} for k, v in detector_states.items()}
-    arrays = arrays.aset("boundary_states", boundary_states)
+    arrays = arrays.aset("detector_states", detector_states)
 
     recording_state = arrays.recording_state
     if reset_recording_state and arrays.recording_state is not None:

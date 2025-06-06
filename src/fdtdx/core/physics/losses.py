@@ -3,6 +3,10 @@ from typing import Any, Sequence
 import jax
 import jax.numpy as jnp
 
+from fdtdx.objects.detectors import (
+    ModeOverlapDetector,
+)
+
 
 def metric_efficiency(
     detector_states: dict[str, dict[str, jax.Array]],
@@ -47,7 +51,7 @@ def metric_efficiency(
 
 def overlap_loss(
     detector_states: dict[str, dict[str, jax.Array]],
-    out_names: Sequence[str],
+    overlap_detectors: Sequence[ModeOverlapDetector],
     metric_name: str,
 ) -> tuple[jax.Array, dict[str, Any]]:
     """Provide modal overlap recorded by overlap detectors.
@@ -70,8 +74,25 @@ def overlap_loss(
                 "objective" for the final objective value
     """
     info, objective = {}, 0
-    for out_name in out_names:
-        overlap = detector_states[out_name][metric_name][-1]
+
+    # Target objective is the sum of squared overlaps from all detectors
+    for overlap_detector_target in overlap_detectors[0]:
+        detector_name = overlap_detector_target.name
+        overlap = overlap_detector_target.compute_overlap(
+            detector_states[detector_name]
+        )
+        overlap = jnp.square(jnp.abs(overlap))
         objective += overlap
-        info[f"{out_name}_{metric_name}"] = overlap
+        info[f"{detector_name}_{metric_name}"] = overlap
+
+    # Add reject overlap modes to the sum of squared overlaps
+    for overlap_detector_reject in overlap_detectors[1]:
+        detector_name = overlap_detector_reject.name
+        overlap = overlap_detector_reject.compute_overlap(
+            detector_states[detector_name]
+        )
+        overlap = jnp.square(jnp.abs(overlap))
+        objective -= overlap
+        info[f"{detector_name}_{metric_name}"] = overlap
+
     return objective, info

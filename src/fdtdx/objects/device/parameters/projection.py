@@ -279,7 +279,7 @@ class SubpixelSmoothedProjection(SameShapeTypeParameterTransform):
                 beta=beta,
                 eta=self.projection_midpoint,
                 # expects resolution as pixels / µm
-                resolution=1 / (voxel_size / 1e-6),
+                resolution = 1 / (voxel_size / 1e-6),
             )
             result[k] = jnp.expand_dims(result_2d, vertical_axis)
 
