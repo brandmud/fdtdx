@@ -1,8 +1,22 @@
+from fdtdx import constants
 from fdtdx.config import GradientConfig, SimulationConfig
 from fdtdx.constants import wavelength_to_period
 from fdtdx.conversion.export import export_stl
+from fdtdx.core.jax.pytrees import (
+    TreeClass,
+    autoinit,
+    field,
+    frozen_field,
+    frozen_private_field,
+    private_field,
+)
 from fdtdx.core.physics.losses import metric_efficiency
-from fdtdx.core.physics.metrics import compute_energy, normalize_by_energy, normalize_by_poynting_flux, poynting_flux
+from fdtdx.core.physics.metrics import (
+    compute_energy,
+    compute_poynting_flux,
+    normalize_by_energy,
+    normalize_by_poynting_flux,
+)
 from fdtdx.core.plotting import colors
 from fdtdx.core.switch import OnOffSwitch
 from fdtdx.core.wavelength import WaveCharacter
@@ -56,6 +70,7 @@ from fdtdx.objects.sources.linear_polarization import GaussianPlaneSource, Unifo
 from fdtdx.objects.sources.mode import ModePlaneSource
 from fdtdx.objects.sources.profile import GaussianPulseProfile, SingleFrequencyProfile
 from fdtdx.objects.static_material.cylinder import Cylinder
+from fdtdx.objects.static_material.polygon import ExtrudedPolygon
 from fdtdx.objects.static_material.sphere import Sphere
 from fdtdx.objects.static_material.static import SimulationVolume, UniformMaterialObject
 from fdtdx.utils.logger import Logger
@@ -65,10 +80,16 @@ __all__ = [
     # conversion
     "export_stl",
     # core
+    "TreeClass",
+    "autoinit",
+    "field",
+    "private_field",
+    "frozen_field",
+    "frozen_private_field",
     "metric_efficiency",
     "compute_energy",
     "normalize_by_energy",
-    "poynting_flux",
+    "compute_poynting_flux",
     "normalize_by_poynting_flux",
     "OnOffSwitch",
     "WaveCharacter",
@@ -131,6 +152,7 @@ __all__ = [
     # static material
     "Cylinder",
     "Sphere",
+    "ExtrudedPolygon",
     "UniformMaterialObject",
     "SimulationVolume",
     # utils
@@ -143,4 +165,5 @@ __all__ = [
     "wavelength_to_period",
     "Material",
     "colors",
+    "constants",
 ]

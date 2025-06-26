@@ -4,14 +4,14 @@ import jax
 import jax.numpy as jnp
 
 from fdtdx.config import SimulationConfig
-from fdtdx.core.jax.pytrees import extended_autoinit, frozen_field, private_field
+from fdtdx.core.jax.pytrees import autoinit, frozen_field, private_field
 from fdtdx.core.physics.modes import compute_mode
 from fdtdx.objects.detectors.detector import DetectorState
 from fdtdx.objects.detectors.phasor import PhasorDetector
 from fdtdx.typing import SliceTuple3D
 
 
-@extended_autoinit
+@autoinit
 class ModeOverlapDetector(PhasorDetector):
     """
     Detector for measuring the overlap of a waveguide mode with the simulation fields.
@@ -92,8 +92,8 @@ class ModeOverlapDetector(PhasorDetector):
             filter_pol=self.filter_pol,
         )
 
-        self = self.aset("_mode_E", mode_E)
-        self = self.aset("_mode_H", mode_H)
+        self = self.aset("_mode_E", mode_E, create_new_ok=True)
+        self = self.aset("_mode_H", mode_H, create_new_ok=True)
         return self
 
     def compute_overlap_to_mode(
