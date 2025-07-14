@@ -9,6 +9,7 @@ from fdtdx.core.physics.modes import compute_mode
 from fdtdx.objects.detectors.detector import DetectorState
 from fdtdx.objects.detectors.phasor import PhasorDetector
 from fdtdx.typing import SliceTuple3D
+from fdtdx.core.physics.metrics import normalize_by_poynting_flux
 
 
 @extended_autoinit
@@ -108,7 +109,10 @@ class ModeOverlapDetector(PhasorDetector):
         alpha_coeff = jnp.sum(E_cross_H_star_sim + E_star_cross_H_sim)
         alpha_coeff = alpha_coeff / 4.0
 
-        return alpha_coeff
+        beta_coeff = jnp.sum(E_cross_H_star_sim - E_star_cross_H_sim)
+        beta_coeff = beta_coeff / 4.0
+
+        return alpha_coeff, beta_coeff
 
     def compute_overlap(
         self,

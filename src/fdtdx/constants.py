@@ -80,6 +80,15 @@ relative_permittivity_silicon_nitride530: float = 4.2284
 relative_permittivity_silica_1550: float = 2.0851
 """Relative permittivity of silica at 1550 nm."""
 
+relative_permittivity_silica_Si3N4: float = 2.1638
+"""Relative permittivity of silica for Si3N4 simulations."""
+
+relative_permittivity_HSQ_Si3N4: float = 1.9488
+"""Relative permittivity of HSQ."""
+
+relative_permittivity_Si3N4: float = 4.0401
+"""Relative permittivity of Si3N4."""
+
 SHARD_STR: str = "shard"
 """String constant used to identify sharded computations."""
 

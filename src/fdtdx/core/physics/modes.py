@@ -166,8 +166,10 @@ def compute_mode(
         jax.lax.stop_gradient(permittivity_squeezed),
         jax.lax.stop_gradient(permeability_squeezed),
     )
-    mode_E = jnp.real(jnp.expand_dims(mode_E_raw, axis=propagation_axis + 1)).astype(input_dtype)
-    mode_H = jnp.real(jnp.expand_dims(mode_H_raw, axis=propagation_axis + 1)).astype(input_dtype)
+    #mode_E = jnp.real(jnp.expand_dims(mode_E_raw, axis=propagation_axis + 1)).astype(input_dtype)
+    #mode_H = jnp.real(jnp.expand_dims(mode_H_raw, axis=propagation_axis + 1)).astype(input_dtype)
+    mode_E = jnp.expand_dims(mode_E_raw, axis=propagation_axis + 1)
+    mode_H = jnp.expand_dims(mode_H_raw, axis=propagation_axis + 1)
 
     # Tidy3D uses different scaling internally, so convert back
     mode_H = mode_H * tidy3d.constants.ETA_0

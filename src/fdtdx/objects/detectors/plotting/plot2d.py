@@ -41,7 +41,9 @@ def plot_2d_from_slices(
             maxvals = max_list[0], max_list[1], max_list[2]
 
     fig = plt.figure(figsize=(20, 10), dpi=plot_dpi)
-    cmap = sns.diverging_palette(220, 20, as_cmap=True)
+    #cmap = sns.diverging_palette(220, 20, as_cmap=True)
+    cmap = sns.color_palette("magma", as_cmap=True)
+ 
     res_x = resolutions[0] / 1.0e-6  # Convert to µm
     res_y = resolutions[1] / 1.0e-6
     res_z = resolutions[2] / 1.0e-6

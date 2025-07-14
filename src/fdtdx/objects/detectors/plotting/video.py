@@ -94,7 +94,7 @@ def _make_animation_frame(t: float | int, precomputed_figs, fps):
 def _normalize_and_colorize(arr, vmin, vmax):
     norm = np.clip((arr - vmin) / (vmax - vmin), 0, 1)
     norm_uint8 = (norm * 255).astype(np.uint8)
-    colored = cv2.applyColorMap(norm_uint8, cv2.COLORMAP_TURBO)
+    colored = cv2.applyColorMap(norm_uint8, cv2.COLORMAP_MAGMA)
     return cv2.cvtColor(colored, cv2.COLOR_BGR2RGB)
 
 
@@ -116,7 +116,7 @@ def _fast_render_frame(
 
     combined = np.concatenate([xy_img, xz_img, yz_img], axis=1)
 
-    scale = 2  # or 3 for 3x resolution
+    scale = 1  # or 3 for 3x resolution
     combined = cv2.resize(combined, (combined.shape[1]*scale, combined.shape[0]*scale), interpolation=cv2.INTER_CUBIC)
     return combined
 
