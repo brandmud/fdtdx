@@ -185,7 +185,7 @@ SimulationState = tuple[jax.Array, ArrayContainer]
 def reset_array_container(
     arrays: ArrayContainer,
     objects: ObjectContainer,
-    reset_detector_states: bool = False,
+    reset_detector_states: bool = True,
     reset_recording_state: bool = False,
 ) -> ArrayContainer:
     """Reset an ArrayContainer's fields and optionally its states.
