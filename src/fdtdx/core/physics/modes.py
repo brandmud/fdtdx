@@ -236,7 +236,7 @@ def tidy3d_mode_computation_wrapper(
     od = np.zeros_like(permittivity_cross_section)
     eps_cross = [
         permittivity_cross_section,
-        1.1e-6 * np.ones_like(permittivity_cross_section),
+        od,#1.1e-6 * np.ones_like(permittivity_cross_section),
         od,
         od,
         permittivity_cross_section,
